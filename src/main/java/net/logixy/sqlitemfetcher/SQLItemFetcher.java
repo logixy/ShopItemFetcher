@@ -23,7 +23,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.sql.*;
+// import java.sql.*;
 
 import net.minecraft.nbt.TagParser;
 import net.minecraft.nbt.NbtUtils;
