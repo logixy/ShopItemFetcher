@@ -33,6 +33,7 @@ password = "password"
 
 [server]
 name = "default"
+```
 
 ## How to Use
 ### 1. Add Items to Shop
