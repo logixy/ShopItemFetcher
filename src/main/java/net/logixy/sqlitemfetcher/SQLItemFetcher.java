@@ -3,6 +3,9 @@ package net.logixy.sqlitemfetcher;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -58,22 +61,26 @@ public class SQLItemFetcher {
             })
         );
 
-        dispatcher.register(Commands.literal("addshop")
-            .requires(source -> source.hasPermission(2)) // Проверка прав
-            .then(Commands.argument("item_name", StringArgumentType.word())
+        dispatcher.register(
+            LiteralArgumentBuilder.<CommandSourceStack>literal("addshop")
+                .requires(source -> source.hasPermission(2)) // Только для операторов
+                .then(
+                    RequiredArgumentBuilder.<CommandSourceStack, String>argument("item_name", StringArgumentType.string()) // Теперь поддерживает кириллицу
+                        .executes(context -> {
+                            ServerPlayer player = context.getSource().getPlayerOrException();
+                            String itemName = StringArgumentType.getString(context, "item_name");
+                            addItemToShopList(player, itemName);
+                            return Command.SINGLE_SUCCESS;
+                        })
+                )
                 .executes(context -> {
                     ServerPlayer player = context.getSource().getPlayerOrException();
-                    String itemName = StringArgumentType.getString(context, "item_name");
-                    addItemToShopList(player, itemName);
+                    addItemToShopList(player, null);
                     return Command.SINGLE_SUCCESS;
                 })
-            ).executes(context -> {
-                ServerPlayer player = context.getSource().getPlayerOrException();
-                addItemToShopList(player, null);
-                return Command.SINGLE_SUCCESS;
-            })
         );
     }
+
 
     private static void addItemToShopList(ServerPlayer player, String itemName) {
         try {
